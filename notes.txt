@@ -1,0 +1,1 @@
+Let compiler do the inline things, don't try to optimize by inline always them.
