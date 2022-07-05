@@ -2,21 +2,14 @@
  *  Parser emits bytecodes for the VM.
  */
 
-use std::{
-    iter::{self, Peekable},
-    slice::Iter,
-    vec::IntoIter,
-};
-
 use anyhow::Result;
 
 use crate::{
-    lexer::{Lexer, Token, TokenLoc},
-    opcodes::{OpCode, OpCodeType},
+    lexer::{Token, TokenLoc},
+    opcodes::OpCode,
 };
 
 pub type TokenData = (Token, TokenLoc);
-pub type TokenIterator = IntoIter<TokenData>;
 pub type TokenList = Vec<TokenData>;
 pub type Program = Vec<OpCode>;
 
@@ -148,8 +141,11 @@ impl Parser {
 
 #[cfg(test)]
 mod test {
-    use super::*;
-    use OpCodeType::*;
+    use crate::{
+        lexer::Lexer,
+        opcodes::{OpCode, OpCodeType::*},
+        parser::Parser,
+    };
 
     #[test]
     fn parse_error_lbracket() {

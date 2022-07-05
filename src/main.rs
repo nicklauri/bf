@@ -1,46 +1,36 @@
-#![allow(warnings)]
-use lexer::Lexer;
-use std::{env, fs, time::Instant};
+use std::fs;
 
-use crate::{parser::Parser, vm::Vm};
+use crate::vm::{Vm, DEFAULT_VM_MEM_SIZE};
+use clap::Parser;
 
-mod codegen;
 mod lexer;
 mod opcodes;
 mod parser;
 mod vm;
 
-fn usage() {
-    let program_name = env::args().nth(0).unwrap();
-    println!("Usage: {} <file>", program_name);
+#[derive(Debug, Parser)]
+#[clap(author, version, about)]
+pub struct Args {
+    file: String,
+
+    #[clap(default_value_t = DEFAULT_VM_MEM_SIZE)]
+    tape_size: usize,
 }
 
 fn run_file(path: &str) -> anyhow::Result<()> {
     let content = fs::read_to_string(&path)?;
 
-    let inst = Instant::now();
     let mut vm = Vm::new(&content)?;
-    println!("creating VM tooks: {:?}", inst.elapsed());
-    println!("program instructions count: {}", vm.program().len());
 
-    let inst = Instant::now();
-    vm.run()?;
-    println!("run program tooks: {:?}", inst.elapsed());
-
-    Ok(())
-}
-
-fn handle_error(err: anyhow::Result<()>) {
-    if let Err(err) = err {
-        eprintln!("error: {}", err);
-    }
+    Ok(vm.run()?)
 }
 
 fn main() {
-    match env::args().nth(1) {
-        Some(path) => {
-            handle_error(run_file(&path));
-        }
-        None => usage(),
+    let args = Args::parse();
+
+    let result = run_file(&args.file);
+
+    if let Err(err) = result {
+        eprintln!("error: {}", err);
     }
 }

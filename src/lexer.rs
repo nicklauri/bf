@@ -115,7 +115,8 @@ impl TokenLoc {
         self.col
     }
 
-    pub(crate) fn from_col_line(col: usize, line: usize) -> Self {
+    #[cfg(test)]
+    pub fn from_col_line(col: usize, line: usize) -> Self {
         Self { line, col }
     }
 

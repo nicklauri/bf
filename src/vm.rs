@@ -1,6 +1,6 @@
 use std::{
     array,
-    io::{stdin, stdout, Read, Stdout, StdoutLock, Write},
+    io::{stdin, stdout, Read, StdoutLock, Write},
 };
 
 use anyhow::{bail, Result};
@@ -41,6 +41,7 @@ impl Vm {
         Ok(vm)
     }
 
+    #[allow(dead_code)]
     pub fn program(&self) -> &Program {
         &self.program
     }
@@ -113,6 +114,7 @@ impl Vm {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub fn shift_right_alt(&mut self, amount: usize) {
         self.mem_ptr += amount;
     }
@@ -135,7 +137,7 @@ impl Vm {
     pub fn print_chars(&mut self, amount: usize, stdout: &mut StdoutLock<'_>) {
         let ch = self.get_cell();
         for _ in 0..amount {
-            stdout.write(&[ch]);
+            let _ = stdout.write(&[ch]);
         }
     }
 
@@ -149,8 +151,8 @@ impl Vm {
         Ok(())
     }
 
-    /// Attribute inline(never) yield better performance?!
-    /// Test with examples/mandelbrot.bf on i5-8300H faster for more than 2 seconds!
+    /// Somehow using #[inline(never)] with #[inline] for all match arms instead of inline into the match
+    /// yields better performance?! Maybe it compiled down into a jump table. I dunno man.
     #[inline(never)]
     pub fn run(&mut self) -> Result<()> {
         use OpCodeType::*;
@@ -169,7 +171,6 @@ impl Vm {
                 JmpNotZero => self.jump_not_zero(data),
                 PrintChar => self.print_chars(data, &mut stdout),
                 InputChar => self.input_char(data)?,
-                _ => bail!("unimplemented instruction: {inst:?}"),
             }
 
             self.pc += 1;

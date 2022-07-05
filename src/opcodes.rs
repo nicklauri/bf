@@ -43,6 +43,7 @@ impl OpCode {
         (self.ty, self.data)
     }
 
+    #[allow(dead_code)]
     pub fn to_string(&self) -> String {
         let op = format!("{:?}", self.ty);
         format!("{:14} {}\n", op, self.data)
