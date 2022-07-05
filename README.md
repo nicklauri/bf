@@ -9,3 +9,6 @@ QA:
 
 3. Other people have simpler implementation.
 - Okay :rocket:.
+
+4. Why does it contain `unsafe`?
+- Uh huh :eyes:
